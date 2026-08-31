@@ -1,0 +1,16 @@
+# Computational Budget por defecto. Puede sobreescribirse por tarea.
+# Nunca se permite un loop sin límite (sección 35).
+
+default:
+  max_iterations: 10
+  max_simulations: 20
+  max_llm_calls: 50
+  max_runtime_seconds: 1800
+  max_research_calls: 15
+
+stopping_criteria:
+  - convergence
+  - no_improvement
+  - constraint_violation
+  - insufficient_evidence
+  - computational_budget_exceeded

@@ -1,0 +1,84 @@
+# Tool Registry — cada tool declara qué agentes pueden invocarla.
+# El ToolProvider RECHAZA en runtime cualquier invocación fuera de esta lista,
+# no es solo una convención de prompt (sección 24).
+
+tools:
+  search_knowledge:
+    handler: "core.knowledge.engine:search"
+    description: "Busca en el knowledge base (vector + structured)."
+    allowed_agents: [research_agent, design_agent, analysis_agent]
+
+  get_source:
+    handler: "core.knowledge.engine:get_source"
+    description: "Recupera la fuente original de un claim."
+    allowed_agents: [research_agent, analysis_agent, critic_agent]
+
+  extract_parameters:
+    handler: "core.knowledge.engine:extract_facts"
+    description: "Extrae parámetros/ecuaciones/restricciones de un documento."
+    allowed_agents: [research_agent]
+
+  create_design:
+    handler: "core.design.repository:create"
+    description: "Crea un nuevo Design."
+    allowed_agents: [design_agent]
+
+  modify_design:
+    handler: "core.design.repository:modify"
+    description: "Modifica variables autorizadas de un Design existente."
+    allowed_agents: [design_agent, optimization_agent]
+
+  validate_units:
+    handler: "core.validation.dimensional_analysis:validate"
+    description: "Gate obligatorio de consistencia dimensional."
+    allowed_agents: [design_agent, simulation_agent, orchestrator]
+
+  check_constraints:
+    handler: "core.validation.dimensional_analysis:check_constraints"
+    description: "Verifica que un Design cumpla sus constraints."
+    allowed_agents: [design_agent, critic_agent, orchestrator]
+
+  run_simulation:
+    handler: "core.simulation.engine:run"
+    description: "Ejecuta un SimulationSolver sobre un Design."
+    allowed_agents: [simulation_agent]
+
+  evaluate_design:
+    handler: "core.evaluation.engine:compare"
+    description: "Compara baseline vs candidate."
+    allowed_agents: [analysis_agent]
+
+  compare_designs:
+    handler: "core.design.repository:compare"
+    description: "Diff estructural entre dos Designs."
+    allowed_agents: [analysis_agent, critic_agent]
+
+  run_optimizer:
+    handler: "core.optimization.optuna_backend:suggest"
+    description: "Sugiere el siguiente punto a explorar (búsqueda matemática)."
+    allowed_agents: [optimization_agent]
+
+  run_sensitivity_analysis:
+    handler: "core.uncertainty.engine:sensitivity_analysis"
+    description: "Análisis de sensibilidad (Phase 9+)."
+    allowed_agents: [analysis_agent]
+
+  run_uncertainty_analysis:
+    handler: "core.uncertainty.engine:propagate"
+    description: "Propagación de incertidumbre (Phase 9+)."
+    allowed_agents: [analysis_agent]
+
+  inspect_results:
+    handler: "core.experiments.store:get"
+    description: "Inspecciona resultados de un experimento previo."
+    allowed_agents: [analysis_agent, critic_agent, optimization_agent]
+
+  save_experiment:
+    handler: "core.experiments.store:save"
+    description: "Persiste un experimento. Solo el Orchestrator persiste."
+    allowed_agents: [orchestrator]
+
+  retrieve_experiment:
+    handler: "core.experiments.store:get"
+    description: "Recupera un experimento por ID."
+    allowed_agents: [research_agent, design_agent, analysis_agent, critic_agent, optimization_agent, orchestrator]

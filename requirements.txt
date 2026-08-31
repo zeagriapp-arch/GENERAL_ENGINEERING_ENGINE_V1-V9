@@ -1,0 +1,29 @@
+# Dependencias del proyecto completo (unión de v01-v09).
+#
+# Cada versión tiene su propio pyproject.toml con SOLO las dependencias
+# que necesita en ese punto (ej. v01_core no necesita optuna). Este
+# archivo raíz instala TODO lo necesario para correr cualquier versión
+# indistintamente — útil para `tools/run_version.py` y para desarrollo
+# general sobre el repo completo.
+#
+# Uso:
+#   pip install -r requirements.txt
+
+# Core (necesario desde v01)
+pydantic>=2.6
+pydantic-settings>=2.2
+pyyaml>=6.0
+pint>=0.23
+numpy>=1.26
+scipy>=1.12
+structlog>=24.1
+httpx>=0.27
+
+# Optimization Engine (necesario desde v05)
+optuna>=3.6
+
+# Testing y validación de arquitectura (todas las versiones)
+pytest>=8.0
+pytest-asyncio>=0.23
+hypothesis>=6.98
+import-linter>=2.0

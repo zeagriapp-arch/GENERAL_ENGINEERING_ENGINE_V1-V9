@@ -1,0 +1,44 @@
+# Model Registry — mapea roles lógicos a modelos concretos servidos por Ollama.
+# NUNCA se hardcodea un nombre de modelo en el código (sección 5).
+provider_default: ollama
+
+roles:
+  reasoning:
+    model: "qwen3:32b"
+    provider: ollama
+    context_size: 32768
+    intended_use: "razonamiento general, hipótesis de diseño, crítica"
+
+  research:
+    model: "qwen3:32b"
+    provider: ollama
+    context_size: 32768
+    intended_use: "búsqueda y síntesis de conocimiento"
+
+  coding:
+    model: "qwen3-coder:30b"
+    provider: ollama
+    context_size: 32768
+    intended_use: "generación/modificación de código de solvers y adapters"
+
+  fast:
+    model: "qwen3:4b"
+    provider: ollama
+    context_size: 8192
+    intended_use: "tareas rápidas, clasificación, resúmenes cortos"
+
+  embeddings:
+    model: "nomic-embed-text"
+    provider: ollama
+    context_size: 8192
+    intended_use: "embeddings para vector search (Knowledge Engine)"
+
+  vision:
+    model: "qwen2.5-vl:7b"
+    provider: ollama
+    context_size: 32768
+    intended_use: "opcional — interpretación de diagramas/imágenes"
+
+ollama:
+  endpoint: "http://localhost:11434"
+  timeout_seconds: 120

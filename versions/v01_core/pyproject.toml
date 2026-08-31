@@ -1,0 +1,60 @@
+[project]
+name = "gede"
+version = "0.1.0"
+description = "General Engineering Discovery & Simulation Engine"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+    "pydantic-settings>=2.2",
+    "pyyaml>=6.0",
+    "pint>=0.23",
+    "numpy>=1.26",
+    "scipy>=1.12",
+    "structlog>=24.1",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "hypothesis>=6.98",
+    "import-linter>=2.0",
+]
+# Añadido en fases posteriores, NO en V1: optuna (Phase 5), chromadb (Phase 2 avanzado)
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["core*", "agents*", "domains*", "infrastructure*", "config*", "scripts*"]
+
+# ---------------------------------------------------------------------------
+# import-linter: hace cumplir la regla de arquitectura de la sección 3/9 del
+# Architecture Design Document -> CORE nunca importa de domains/ ni agents/.
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_packages = ["core", "agents", "domains", "infrastructure"]
+
+[[tool.importlinter.contracts]]
+name = "Core no depende de domains ni de agents"
+type = "forbidden"
+source_modules = ["core"]
+forbidden_modules = ["domains", "agents"]
+
+[[tool.importlinter.contracts]]
+name = "Domains no dependen de agents"
+type = "forbidden"
+source_modules = ["domains"]
+forbidden_modules = ["agents"]
+
+[[tool.importlinter.contracts]]
+name = "Infrastructure no depende de domains ni agents"
+type = "forbidden"
+source_modules = ["infrastructure"]
+forbidden_modules = ["domains", "agents"]
