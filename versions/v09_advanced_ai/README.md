@@ -47,6 +47,11 @@ que las ABC no se pueden instanciar sin implementar ambos métodos).
 - `SensitivityAnalyzer`/`ExecutionBackend`/`SurrogateModel`: interfaces sin implementación (deliberado).
 - `OptimizationAgent` no conectado al loop principal del Orchestrator (ver v06).
 - El ciclo Discovery Mode / Optimization Mode aún comparte implementación (ver v08).
+- `config/tools.yaml` conserva 4 forward declarations sin implementar desde
+  v01 (`evaluate_design`, `run_optimizer`, `run_sensitivity_analysis`,
+  `run_uncertainty_analysis`) — ya documentado como diseño intencional en
+  v01_core/README.md, ver el comentario junto a esas entradas en este
+  mismo archivo para el detalle completo.
 
 ## Dependencia de versiones anteriores
 

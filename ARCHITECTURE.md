@@ -96,6 +96,18 @@ v09_advanced_ai     — SurrogateModel/ActiveLearningStrategy (stubs),
 independiente en cada una de las 9 carpetas — no solo en el estado
 final. Ver `tools/compare_versions.py` para reproducirlo.
 
+Nota: en v01_core–v05_optimization, `agents/` todavía no existe, así que
+el contrato activo en esas 5 carpetas es únicamente "`core`/`infrastructure`
+no dependen de `domains`" (2 contratos) — "`domains` no depende de `agents`"
+se vuelve un contrato real y ejecutable recién desde v06_agents, que es
+donde `agents/` aparece por primera vez. Antes de la corrección documentada
+en `P1_P2_IMPLEMENTATION_REPORT.md`, `root_packages` de v01–v05 listaba
+`agents` de todas formas, lo que hacía que `lint-imports` fallara antes de
+evaluar nada — la regla en sí siempre se cumplió (confirmable con
+`grep -rn "^from agents\|^import agents" core/ domains/` en cualquiera de
+esas 5 carpetas), pero el comando de verificación citado no corría tal
+cual estaba documentado.
+
 ## Documento de arquitectura técnica original
 
 El diseño técnico completo (interfaces, schemas, decisiones de stack,

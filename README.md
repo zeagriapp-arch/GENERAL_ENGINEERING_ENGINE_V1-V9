@@ -70,15 +70,26 @@ posteriores):
 
 | Versión | Tests | Import boundary (`core ↛ domains/agents`) |
 |---|---|---|
-| v01_core | 34/34 ✅ | 3/3 contratos ✅ |
-| v02_knowledge | 50/50 ✅ | 3/3 contratos ✅ |
-| v03_physics | 125/125 ✅ | 3/3 contratos ✅ |
-| v04_design | 143/143 ✅ | 3/3 contratos ✅ |
-| v05_optimization | 155/155 ✅ | 3/3 contratos ✅ |
+| v01_core | 34/34 ✅ | 2/2 contratos ✅ |
+| v02_knowledge | 50/50 ✅ | 2/2 contratos ✅ |
+| v03_physics | 125/125 ✅ | 2/2 contratos ✅ |
+| v04_design | 143/143 ✅ | 2/2 contratos ✅ |
+| v05_optimization | 155/155 ✅ | 2/2 contratos ✅ |
 | v06_agents | 177/177 ✅ | 3/3 contratos ✅ |
 | v07_propulsion_domain | 186/186 ✅ | 3/3 contratos ✅ |
 | v08_discovery_report | 196/196 ✅ | 3/3 contratos ✅ |
 | v09_advanced_ai | 200/200 ✅ | 3/3 contratos ✅ |
+
+v01–v05 verifican 2 contratos (`core`/`infrastructure` no dependen de
+`domains`) porque `agents/` todavía no existe en esas fases — no tendría
+sentido, ni sería ejecutable, un contrato "no depende de agents" sobre un
+paquete inexistente. El tercer contrato (`domains no depende de agents`)
+se activa desde v06_agents, que es donde `agents/` aparece por primera
+vez. Los 9 números de esta tabla se corrieron de nuevo en esta sesión con
+`lint-imports` real, no se copiaron de una versión anterior del README —
+antes de esta corrección, `lint-imports` fallaba con `Could not find
+package 'agents'` en v01–v05 y no llegaba a evaluar ningún contrato (ver
+`P1_P2_IMPLEMENTATION_REPORT.md`).
 
 Ver `shared/documentation/INVENTORY.md` para el detalle archivo por
 archivo, y `versions/VERSION_MAP.md` para qué construye cada fase.

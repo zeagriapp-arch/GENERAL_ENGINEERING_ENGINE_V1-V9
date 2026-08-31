@@ -43,6 +43,42 @@ tools:
     description: "Ejecuta un SimulationSolver sobre un Design."
     allowed_agents: [simulation_agent]
 
+  # --------------------------------------------------------------------
+  # Las 4 tools de abajo (evaluate_design, run_optimizer,
+  # run_sensitivity_analysis, run_uncertainty_analysis) son FORWARD
+  # DECLARATIONS deliberadas, presentes sin cambios desde v01_core: sus
+  # `handler` apuntan a módulos/funciones que nunca se construyeron en
+  # ninguna de las 9 versiones. Esto ya estaba documentado como diseño
+  # intencional en v01_core/README.md ("anticipan handlers de fases
+  # futuras... invocarlos devuelve un error explícito manejado, no un
+  # crash"). Verificado en la auditoría de 2026-08-30
+  # (AUDIT_REPORT.md / P1_P2_IMPLEMENTATION_REPORT.md, hallazgo H-4):
+  #   - `ToolRegistry.invoke()` captura ImportError/AttributeError y
+  #     devuelve ToolResult(ok=False, ...) — no hay crash ni resultado
+  #     corrupto si algo llega a invocarlas.
+  #   - Ninguno de los 6 agentes implementados en v06-v09 invoca estas
+  #     4 tools (confirmado por grep sobre agents/*.py): son código sin
+  #     alcanzar (dead config), no una ruta activa con un bug latente.
+  #   - `evaluate_design`/`run_optimizer` fueron superadas por decisiones
+  #     de diseño reales durante el desarrollo: la comparación
+  #     baseline-vs-candidate terminó viviendo en
+  #     `core/design/candidate.py:evaluate_requirements()` +
+  #     `agents/analysis_agent.py:compute_evaluation()` (firma distinta a
+  #     la de `compare()` del Architecture Design Document original); la
+  #     búsqueda del Optimizer terminó siendo `OptunaOptimizer.optimize()`
+  #     (corre el estudio completo) en vez de un `suggest()` punto-a-punto.
+  #     No hay un módulo real al que "reapuntar" sin inventar una función
+  #     nueva — por eso se dejan como forward declaration, no se corrigen
+  #     ni se implementan en esta ronda (ver Priority 2, Opción B/D del
+  #     IMPLEMENTATION_PLAN.md).
+  #   - `run_sensitivity_analysis`/`run_uncertainty_analysis` son Phase 9
+  #     explícitamente diferida: `core/uncertainty/sensitivity.py` tiene
+  #     una interfaz `SensitivityAnalyzer` sin implementar (ni siquiera en
+  #     el path `core.uncertainty.engine` que cita este YAML), y
+  #     `core/uncertainty/engine.py` no existe en absoluto.
+  # No crear stubs vacíos para "tapar" esto — ver AUDIT_REPORT.md sección
+  # 26 (NO FINGIR FUNCIONALIDAD).
+  # --------------------------------------------------------------------
   evaluate_design:
     handler: "core.evaluation.engine:compare"
     description: "Compara baseline vs candidate."
@@ -53,16 +89,29 @@ tools:
     description: "Diff estructural entre dos Designs."
     allowed_agents: [analysis_agent, critic_agent]
 
+  # Forward declaration — ver nota extensa junto a `evaluate_design` más
+  # arriba. `OptimizationAgent` (agents/optimization_agent.py) declara
+  # explícitamente en su propio docstring que "NUNCA invoca run_optimizer
+  # directamente" — esta tool nunca fue parte del flujo real ni siquiera
+  # cuando exista la integración pendiente (ver README "Limitaciones
+  # conocidas" y la conversación de arquitectura pendiente sobre
+  # OptimizationAgent).
   run_optimizer:
     handler: "core.optimization.optuna_backend:suggest"
     description: "Sugiere el siguiente punto a explorar (búsqueda matemática)."
     allowed_agents: [optimization_agent]
 
+  # Forward declaration — ver nota extensa junto a `evaluate_design` más
+  # arriba. Phase 9 (Scientific ML / Uncertainty Engine), deliberadamente
+  # sin implementar en V1.
   run_sensitivity_analysis:
     handler: "core.uncertainty.engine:sensitivity_analysis"
     description: "Análisis de sensibilidad (Phase 9+)."
     allowed_agents: [analysis_agent]
 
+  # Forward declaration — ver nota extensa junto a `evaluate_design` más
+  # arriba. Phase 9 (Scientific ML / Uncertainty Engine), deliberadamente
+  # sin implementar en V1.
   run_uncertainty_analysis:
     handler: "core.uncertainty.engine:propagate"
     description: "Propagación de incertidumbre (Phase 9+)."

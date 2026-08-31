@@ -42,22 +42,24 @@ include = ["core*", "agents*", "domains*", "infrastructure*", "config*", "script
 # Architecture Design Document -> CORE nunca importa de domains/ ni agents/.
 # ---------------------------------------------------------------------------
 [tool.importlinter]
-root_packages = ["core", "agents", "domains", "infrastructure"]
+# root_packages refleja el estado REAL de esta versión: `agents/` no existe
+# todavía (llega en v06_agents). Listarlo aquí rompe `lint-imports` con
+# "Could not find package 'agents'" antes de evaluar un solo contrato.
+root_packages = ["core", "domains", "infrastructure"]
 
 [[tool.importlinter.contracts]]
-name = "Core no depende de domains ni de agents"
+name = "Core no depende de domains"
 type = "forbidden"
 source_modules = ["core"]
-forbidden_modules = ["domains", "agents"]
+forbidden_modules = ["domains"]
 
 [[tool.importlinter.contracts]]
-name = "Domains no dependen de agents"
-type = "forbidden"
-source_modules = ["domains"]
-forbidden_modules = ["agents"]
-
-[[tool.importlinter.contracts]]
-name = "Infrastructure no depende de domains ni agents"
+name = "Infrastructure no depende de domains"
 type = "forbidden"
 source_modules = ["infrastructure"]
-forbidden_modules = ["domains", "agents"]
+forbidden_modules = ["domains"]
+
+# El contrato "Domains no dependen de agents" y la mención a "agents" en
+# los dos contratos de arriba se reintroducen a partir de v06_agents/, que
+# es donde `agents/` existe por primera vez. No tiene sentido prohibir
+# depender de un paquete que todavía no existe.
