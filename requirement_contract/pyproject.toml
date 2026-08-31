@@ -1,0 +1,62 @@
+[project]
+name = "requirement-contract"
+version = "0.1.0"
+description = "Requirement Contract Engine — RequirementCandidate -> Requirement, independiente de dominio."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+]
+
+# ---------------------------------------------------------------------------
+# Dependencia intencional de `versions/v09_advanced_ai` (paquete "gede"), NO
+# una copia: se reutiliza core.validation.dimensional_analysis (unidades) y
+# core.requirements.schema (integration.py) tal como existen, ya auditados
+# y con 200 tests propios. Ver README.md de esta carpeta para el setup en
+# dos pasos (pip local no resuelve una ruta relativa de forma portable en
+# todas las plataformas, así que no se declara aquí como dependency string).
+# ---------------------------------------------------------------------------
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "hypothesis>=6.98",
+    "import-linter>=2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["requirement_contract*"]
+
+# ---------------------------------------------------------------------------
+# import-linter: requirement_contract solo puede depender de `core` (de
+# gede/v09_advanced_ai, para reutilizar unidades) — nunca de `agents` ni
+# `domains`, que arrastrarían acoplamiento a LLM/dominio concreto dentro de
+# lo que debe ser un contrato agnóstico. Requiere `core` en PYTHONPATH junto
+# a este paquete (ver README.md) para poder analizarse — igual que las
+# versions/vXX ya establecidas.
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_packages = ["requirement_contract", "core"]
+# agents/domains no son root_packages propios de este paquete (no son una
+# dependencia real de requirement_contract, solo se prohíben defensivamente)
+# — include_external_packages permite referenciarlos en forbidden_modules
+# sin exigir que estén instalados/importables para poder correr el lint.
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "requirement_contract no depende de agents ni domains"
+type = "forbidden"
+source_modules = ["requirement_contract"]
+forbidden_modules = ["agents", "domains"]
+
+[[tool.importlinter.contracts]]
+name = "requirement_contract no depende de ningun provider de LLM concreto"
+type = "forbidden"
+source_modules = ["requirement_contract"]
+forbidden_modules = ["core.models.ollama_provider"]
