@@ -1,0 +1,61 @@
+[project]
+name = "design-contract"
+version = "0.1.0"
+description = "Design & DesignSpace Engine — Design, DesignSpace, CandidateDesign, DesignGenerator, agnóstico de dominio."
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.6",
+]
+
+# ---------------------------------------------------------------------------
+# Dependencia intencional de versions/v09_advanced_ai (paquete "gede") y de
+# requirement_contract (hermano de esta misma fase), NO una copia — ver
+# DESIGN_DESIGNSPACE_IMPLEMENTATION_REPORT.md sección 1. pip local no
+# resuelve una ruta relativa de forma portable en todas las plataformas,
+# así que no se declara aquí como dependency string; ver README.md para el
+# setup en tres pasos.
+# ---------------------------------------------------------------------------
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "hypothesis>=6.98",
+    "import-linter>=2.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["design_contract*"]
+
+# ---------------------------------------------------------------------------
+# import-linter: design_contract puede depender de `core` (unidades) y de
+# `requirement_contract` (referencia a Requirement), pero nunca de `agents`
+# ni `domains` (dominio/LLM concretos), ni de ningún provider de LLM.
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_packages = ["design_contract", "core", "requirement_contract"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "design_contract no depende de agents ni domains"
+type = "forbidden"
+source_modules = ["design_contract"]
+forbidden_modules = ["agents", "domains"]
+
+[[tool.importlinter.contracts]]
+name = "design_contract no depende de ningun provider de LLM concreto"
+type = "forbidden"
+source_modules = ["design_contract"]
+forbidden_modules = ["core.models.ollama_provider"]
+
+[[tool.importlinter.contracts]]
+name = "requirement_contract no depende de design_contract (evita ciclo entre fases)"
+type = "forbidden"
+source_modules = ["requirement_contract"]
+forbidden_modules = ["design_contract"]
